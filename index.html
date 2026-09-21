@@ -900,14 +900,22 @@ footer {
 .ghb-tip {
   position:absolute; bottom:calc(100% + 10px); right:0;
   background:#0c0c0c; border:1px solid var(--accent);
-  border-radius:8px; padding:10px 14px;
+  border-radius:8px; padding:12px 16px;
   font-family:'JetBrains Mono',monospace; font-size:10px;
-  color:var(--text); white-space:nowrap; line-height:1.7;
+  color:var(--text); white-space:nowrap; line-height:1.8;
+  min-width:220px;
   opacity:0; pointer-events:none;
   transform:translateY(5px);
   transition:opacity .2s, transform .2s;
 }
-.ghb-tip code { color:var(--accent); display:block; margin-top:2px; }
+.ghb-tip .ghb-label {
+  display:block; font-size:9px; letter-spacing:.1em;
+  color:var(--muted); text-transform:uppercase; margin-bottom:6px;
+}
+.ghb-tip .ghb-row { display:flex; align-items:center; gap:8px; margin-bottom:2px; }
+.ghb-tip .ghb-game { color:var(--accent); flex-shrink:0; }
+.ghb-tip .ghb-code { color:var(--text); }
+.ghb-tip .ghb-code.revealed { color:var(--accent); font-weight:700; letter-spacing:.06em; }
 .ghb-tip::after {
   content:''; position:absolute; top:100%; right:9px;
   border:6px solid transparent; border-top-color:var(--accent);
@@ -1146,7 +1154,11 @@ footer {
     </div>
     <div id="ghb">
       <span class="ghb-icon">🕹</span>
-      <div class="ghb-tip">psst… there's a hidden game here<br><code>↑↑↓↓←→←→BA</code></div>
+      <div class="ghb-tip">
+        <span class="ghb-label" id="ghb-label">psst…</span>
+        <div class="ghb-row"><span class="ghb-game">🐍</span><span class="ghb-code" id="ghb-snake-code">a hidden game lives here</span></div>
+        <div class="ghb-row"><span class="ghb-game">🏓</span><span class="ghb-code" id="ghb-pong-code">and another one too</span></div>
+      </div>
     </div>
   </section>
 
@@ -2335,6 +2347,58 @@ if (tlItems.length) {
   }, {passive:true});
 })();
 
+
+/* ── GAME HINT BUBBLE (progressive) ── */
+(function() {
+  const ghb       = document.getElementById('ghb');
+  const labelEl   = document.getElementById('ghb-label');
+  const snakeEl   = document.getElementById('ghb-snake-code');
+  const pongEl    = document.getElementById('ghb-pong-code');
+
+  const levels = [
+    {
+      label: 'psst… two games are hiding here',
+      snake: 'a classic cheat code unlocks one',
+      pong:  'typing a short word unlocks the other',
+      clear: false,
+    },
+    {
+      label: 'still hunting? here\'s a nudge',
+      snake: '10 directional keys + 2 letters on a keyboard',
+      pong:  'four letters… think of the site owner\'s name',
+      clear: false,
+    },
+    {
+      label: 'one more hint…',
+      snake: 'up up down down left right left right then B then A',
+      pong:  'the word? I·Z·Z·Y — type it anywhere',
+      clear: false,
+    },
+    {
+      label: 'okay, I\'ll spell it out 😄',
+      snake: '↑ ↑ ↓ ↓ ← → ← → B A  on your keyboard',
+      pong:  'just type  I  Z  Z  Y  on your keyboard',
+      clear: true,
+    },
+  ];
+
+  let views = 0;
+
+  ghb.addEventListener('mouseenter', () => {
+    const lvl = levels[Math.min(views, levels.length - 1)];
+    labelEl.textContent = lvl.label;
+    snakeEl.textContent = lvl.snake;
+    pongEl.textContent  = lvl.pong;
+    if (lvl.clear) {
+      snakeEl.classList.add('revealed');
+      pongEl.classList.add('revealed');
+    } else {
+      snakeEl.classList.remove('revealed');
+      pongEl.classList.remove('revealed');
+    }
+    if (views < levels.length - 1) views++;
+  });
+})();
 
 /* ── CHALLENGE MODAL (global) ── */
 window._challenge = (function() {
