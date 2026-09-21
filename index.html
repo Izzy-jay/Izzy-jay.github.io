@@ -879,6 +879,137 @@ footer {
   text-transform:uppercase; color:var(--accent);
   opacity:.7;
 }
+
+/* ── GAME HINT BUBBLE ── */
+#ghb {
+  position:absolute; bottom:2.4rem; right:clamp(20px,5vw,64px);
+  z-index:3; cursor:default;
+}
+.ghb-icon {
+  width:34px; height:34px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px;
+  animation:ghb-glow 3s ease-in-out infinite;
+}
+@keyframes ghb-glow {
+  0%,100% { border-color:var(--border); box-shadow:none; }
+  50% { border-color:var(--accent); box-shadow:0 0 14px var(--accent-glow); }
+}
+.ghb-tip {
+  position:absolute; bottom:calc(100% + 10px); right:0;
+  background:#0c0c0c; border:1px solid var(--accent);
+  border-radius:8px; padding:10px 14px;
+  font-family:'JetBrains Mono',monospace; font-size:10px;
+  color:var(--text); white-space:nowrap; line-height:1.7;
+  opacity:0; pointer-events:none;
+  transform:translateY(5px);
+  transition:opacity .2s, transform .2s;
+}
+.ghb-tip code { color:var(--accent); display:block; margin-top:2px; }
+.ghb-tip::after {
+  content:''; position:absolute; top:100%; right:9px;
+  border:6px solid transparent; border-top-color:var(--accent);
+}
+#ghb:hover .ghb-tip { opacity:1; transform:translateY(0); }
+
+/* ── CHALLENGE MODAL ── */
+#challenge-modal {
+  display:none; position:fixed; inset:0; z-index:3000;
+  background:rgba(8,8,8,.9); backdrop-filter:blur(10px);
+  align-items:center; justify-content:center;
+}
+#challenge-modal.show { display:flex; }
+#chall-card {
+  background:var(--surface); border:1px solid var(--accent);
+  border-radius:12px; padding:2.4rem 2rem 2rem;
+  max-width:400px; width:88%; text-align:center;
+  animation:chall-pop .28s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes chall-pop {
+  from { opacity:0; transform:scale(.88) translateY(20px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+#chall-badge {
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace; font-size:.65rem;
+  letter-spacing:.15em; text-transform:uppercase;
+  color:var(--accent); border:1px solid var(--accent);
+  border-radius:4px; padding:3px 8px; margin-bottom:1.1rem;
+}
+#chall-head {
+  font-family:'Syne',sans-serif; font-weight:900;
+  font-size:1.45rem; line-height:1.15;
+  color:var(--text); margin-bottom:1.4rem;
+}
+.chall-row {
+  display:flex; align-items:flex-start; gap:.7rem;
+  text-align:left; margin-bottom:.8rem;
+  font-family:'JetBrains Mono',monospace; font-size:.72rem; line-height:1.5;
+}
+.chall-label {
+  background:var(--dim); border-radius:4px;
+  padding:2px 7px; color:var(--muted);
+  white-space:nowrap; flex-shrink:0; margin-top:1px;
+}
+.chall-val { color:var(--text); }
+.chall-val strong { color:var(--accent); }
+#chall-punchline {
+  font-family:'Syne',sans-serif; font-size:1rem; font-weight:700;
+  color:var(--accent); margin:1.3rem 0 1.6rem;
+}
+#chall-btns { display:flex; flex-direction:column; gap:.65rem; }
+#chall-accept {
+  background:var(--accent); color:#080808;
+  border:none; padding:.8rem 1.5rem;
+  font-family:'Syne',sans-serif; font-weight:900; font-size:.82rem;
+  letter-spacing:.1em; border-radius:6px; cursor:pointer;
+  transition:opacity .15s;
+}
+#chall-accept:hover { opacity:.88; }
+#chall-flee {
+  background:transparent; color:var(--muted);
+  border:1px solid var(--border); padding:.6rem 1.5rem;
+  font-family:'JetBrains Mono',monospace; font-size:.72rem;
+  border-radius:6px; cursor:pointer; transition:border-color .15s, color .15s;
+}
+#chall-flee:hover { border-color:var(--muted); color:var(--text); }
+
+/* ── GAME RESULT CARDS ── */
+#snake-result, #pong-result {
+  display:none;
+  flex-direction:column; align-items:center; gap:.9rem;
+  padding:.8rem 1rem .2rem; text-align:center;
+}
+#snake-result.show, #pong-result.show { display:flex; }
+.gr-title {
+  font-family:'Syne',sans-serif; font-weight:900;
+  font-size:1.1rem; letter-spacing:.05em;
+}
+.gr-title.win { color:var(--accent); }
+.gr-title.lose { color:#ff4757; }
+.gr-sub {
+  font-family:'JetBrains Mono',monospace; font-size:.72rem;
+  color:var(--muted); line-height:1.6;
+}
+.gr-actions { display:flex; gap:.65rem; flex-wrap:wrap; justify-content:center; }
+.gr-cta {
+  background:var(--accent); color:#080808;
+  padding:.55rem 1.2rem; border-radius:5px;
+  font-family:'Syne',sans-serif; font-weight:900; font-size:.75rem;
+  letter-spacing:.08em; text-decoration:none;
+  transition:opacity .15s;
+}
+.gr-cta:hover { opacity:.85; }
+.gr-again {
+  background:transparent; color:var(--muted);
+  border:1px solid var(--border); padding:.5rem 1rem;
+  font-family:'JetBrains Mono',monospace; font-size:.7rem;
+  border-radius:5px; cursor:pointer;
+  transition:border-color .15s, color .15s;
+}
+.gr-again:hover { border-color:var(--muted); color:var(--text); }
 </style>
 </head>
 <body>
@@ -899,6 +1030,27 @@ footer {
   </svg>
 </button>
 
+<!-- CHALLENGE MODAL -->
+<div id="challenge-modal">
+  <div id="chall-card">
+    <div id="chall-badge">⚠ challenge issued</div>
+    <div id="chall-head">Think you can beat me?</div>
+    <div class="chall-row">
+      <span class="chall-label">WIN</span>
+      <span class="chall-val">Score 20+ points (Snake) or beat the CPU (Pong) and… <strong>let's work together.</strong></span>
+    </div>
+    <div class="chall-row">
+      <span class="chall-label">LOSE</span>
+      <span class="chall-val">You'll <strong>definitely</strong> have to work with me.</span>
+    </div>
+    <div id="chall-punchline">Either way, I win. 😈</div>
+    <div id="chall-btns">
+      <button id="chall-accept">ACCEPT THE CHALLENGE</button>
+      <button id="chall-flee">I'm scared… let me out</button>
+    </div>
+  </div>
+</div>
+
 <!-- SNAKE GAME EASTER EGG -->
 <div id="snake-overlay">
   <div id="snake-topbar">
@@ -908,6 +1060,14 @@ footer {
   </div>
   <canvas id="snake-canvas" width="420" height="420"></canvas>
   <div id="snake-msg">press any arrow key to start</div>
+  <div id="snake-result">
+    <div class="gr-title" id="sr-title"></div>
+    <div class="gr-sub" id="sr-sub"></div>
+    <div class="gr-actions">
+      <a href="#contact" class="gr-cta" id="sr-cta">LET'S WORK TOGETHER →</a>
+      <button class="gr-again" id="sr-retry">PLAY AGAIN</button>
+    </div>
+  </div>
   <div id="snake-hint">↑↑↓↓←→←→BA = snake &nbsp;·&nbsp; type IZZY = pong</div>
   <div id="snake-dpad">
     <div class="dpad-row"><button class="dpad-btn" data-dir="up">↑</button></div>
@@ -928,6 +1088,14 @@ footer {
   </div>
   <canvas id="pong-canvas" width="560" height="360"></canvas>
   <div id="pong-msg">press space or any key to start</div>
+  <div id="pong-result">
+    <div class="gr-title" id="pr-title"></div>
+    <div class="gr-sub" id="pr-sub"></div>
+    <div class="gr-actions">
+      <a href="#contact" class="gr-cta" id="pr-cta">LET'S WORK TOGETHER →</a>
+      <button class="gr-again" id="pr-retry">REMATCH</button>
+    </div>
+  </div>
   <div id="pong-hint">↑ / ↓ or W / S to move &nbsp;·&nbsp; first to 7 wins</div>
 </div>
 
@@ -975,6 +1143,10 @@ footer {
     <div class="hero-scroll">
       <span class="scroll-line"></span>
       <span class="scroll-text">scroll</span>
+    </div>
+    <div id="ghb">
+      <span class="ghb-icon">🕹</span>
+      <div class="ghb-tip">psst… there's a hidden game here<br><code>↑↑↓↓←→←→BA</code></div>
     </div>
   </section>
 
@@ -1789,6 +1961,7 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
       scoreEl.textContent = score;
       if (score > highScore) highScore = score;
       if (levelEl) levelEl.textContent = 'lv.' + getLevel();
+      if (score >= 20) { snakeWin(); return; }
       clearInterval(loop);
       loop = setInterval(tick, getSpeed());
     } else {
@@ -1796,6 +1969,31 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
     }
     draw();
   }
+
+  const snakeResult = document.getElementById('snake-result');
+  const srTitle = document.getElementById('sr-title');
+  const srSub   = document.getElementById('sr-sub');
+
+  function showSnakeResult(win) {
+    snakeResult.classList.add('show');
+    if (win) {
+      srTitle.className = 'gr-title win';
+      srTitle.textContent = 'YOU WON 🏆';
+      srSub.textContent   = 'Not bad. Plot twist though — you still have to work with me. 😂';
+    } else {
+      srTitle.className = 'gr-title lose';
+      srTitle.textContent = 'GAME OVER';
+      srSub.textContent   = 'Told you. The best move now is to work with me.';
+    }
+  }
+  document.getElementById('sr-retry').addEventListener('click', () => {
+    snakeResult.classList.remove('show');
+    initGame();
+  });
+  document.getElementById('sr-cta').addEventListener('click', () => {
+    closeGame();
+    snakeResult.classList.remove('show');
+  });
 
   function gameOver() {
     clearInterval(loop);
@@ -1807,11 +2005,28 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
     ctx.fillStyle = '#ff4757';
     ctx.font = 'bold 28px Syne,sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2 - 18);
+    ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2 - 8);
     ctx.font = '13px JetBrains Mono,monospace';
     ctx.fillStyle = '#52524e';
-    ctx.fillText('score: '+score+'  |  best: '+highScore, canvas.width/2, canvas.height/2+10);
-    ctx.fillText('press any arrow to restart', canvas.width/2, canvas.height/2+32);
+    ctx.fillText('score: '+score+'  |  best: '+highScore, canvas.width/2, canvas.height/2+18);
+    showSnakeResult(false);
+  }
+
+  function snakeWin() {
+    clearInterval(loop);
+    clearInterval(hintTimer);
+    clearTimeout(specialTimer);
+    running = false;
+    ctx.fillStyle = 'rgba(200,245,71,.1)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = ACCENT;
+    ctx.font = 'bold 28px Syne,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('YOU WIN! 🏆', canvas.width/2, canvas.height/2 - 8);
+    ctx.font = '13px JetBrains Mono,monospace';
+    ctx.fillStyle = '#52524e';
+    ctx.fillText('score: '+score+'  |  best: '+highScore, canvas.width/2, canvas.height/2+18);
+    showSnakeResult(true);
   }
 
   function startHints() {
@@ -1837,6 +2052,7 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
   function openGame() {
     overlay.classList.add('show');
     document.body.style.overflow = 'hidden';
+    snakeResult.classList.remove('show');
     initGame();
   }
   function closeGame() {
@@ -1846,6 +2062,7 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
     overlay.classList.remove('show');
     document.body.style.overflow = '';
     running = false;
+    snakeResult.classList.remove('show');
   }
 
   document.getElementById('snake-close').addEventListener('click', closeGame);
@@ -1857,7 +2074,7 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
   document.addEventListener('keydown', e => {
     const k = e.keyCode;
     kpos = (k === KONAMI[kpos]) ? kpos+1 : (k === KONAMI[0] ? 1 : 0);
-    if (kpos === KONAMI.length) { kpos=0; openGame(); return; }
+    if (kpos === KONAMI.length) { kpos=0; window._challenge(openGame); return; }
 
     if (!overlay.classList.contains('show')) return;
     if (e.key === 'Escape') { closeGame(); return; }
@@ -2031,6 +2248,19 @@ if (tlItems.length) {
     draw();
   }
 
+  const pongResult = document.getElementById('pong-result');
+  const prTitle = document.getElementById('pr-title');
+  const prSub   = document.getElementById('pr-sub');
+
+  document.getElementById('pr-retry').addEventListener('click', () => {
+    pongResult.classList.remove('show');
+    initGame();
+  });
+  document.getElementById('pr-cta').addEventListener('click', () => {
+    closePong();
+    pongResult.classList.remove('show');
+  });
+
   function endGame(won) {
     clearInterval(loop);
     running = false;
@@ -2039,10 +2269,13 @@ if (tlItems.length) {
     ctx.fillStyle = won ? ACCENT : RED;
     ctx.font = 'bold 32px Syne,sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(won ? 'YOU WIN.' : 'CPU WINS.', W/2, H/2 - 16);
-    ctx.font = '12px JetBrains Mono,monospace';
-    ctx.fillStyle = '#52524e';
-    ctx.fillText('press space or any arrow to rematch', W/2, H/2 + 14);
+    ctx.fillText(won ? 'YOU WIN.' : 'CPU WINS.', W/2, H/2 - 8);
+    pongResult.classList.add('show');
+    prTitle.className = 'gr-title ' + (won ? 'win' : 'lose');
+    prTitle.textContent = won ? 'YOU ACTUALLY WON 🏆' : 'CPU WINS.';
+    prSub.textContent = won
+      ? 'Impressive. But this means we HAVE to work together now. 😂'
+      : 'You lost to a bot. The only logical next step — let\'s work together.';
   }
 
   function startGame() {
@@ -2056,6 +2289,7 @@ if (tlItems.length) {
   function openPong() {
     overlay.classList.add('show');
     document.body.style.overflow = 'hidden';
+    pongResult.classList.remove('show');
     initGame();
   }
   function closePong() {
@@ -2063,6 +2297,7 @@ if (tlItems.length) {
     overlay.classList.remove('show');
     document.body.style.overflow = '';
     running = false;
+    pongResult.classList.remove('show');
   }
 
   document.getElementById('pong-close').addEventListener('click', closePong);
@@ -2073,7 +2308,7 @@ if (tlItems.length) {
     if (!overlay.classList.contains('show') && !snakeOpen) {
       const ch = e.key.toLowerCase();
       codeBuf = (CODE.includes(ch)) ? (codeBuf + ch).slice(-4) : '';
-      if (codeBuf === CODE) { codeBuf = ''; openPong(); return; }
+      if (codeBuf === CODE) { codeBuf = ''; window._challenge(openPong); return; }
     }
 
     if (!overlay.classList.contains('show')) return;
@@ -2100,6 +2335,27 @@ if (tlItems.length) {
   }, {passive:true});
 })();
 
+
+/* ── CHALLENGE MODAL (global) ── */
+window._challenge = (function() {
+  const modal  = document.getElementById('challenge-modal');
+  const accept = document.getElementById('chall-accept');
+  const flee   = document.getElementById('chall-flee');
+  let _cb = null;
+
+  function hide() { modal.classList.remove('show'); _cb = null; }
+
+  accept.addEventListener('click', () => {
+    const cb = _cb; hide();
+    if (cb) cb();
+  });
+  flee.addEventListener('click', hide);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('show')) hide();
+  });
+
+  return function(callback) { _cb = callback; modal.classList.add('show'); };
+})();
 </script>
 </body>
 </html>
