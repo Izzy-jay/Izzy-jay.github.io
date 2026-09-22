@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Israel Gachara — IT · Dev · Cybersecurity</title>
+<meta name="description" content="IT professional, software developer and cybersecurity practitioner based in Kenya. Self-taught, ships work, open to opportunities.">
+<meta property="og:title" content="Israel Gachara — IT · Dev · Cybersecurity">
+<meta property="og:description" content="IT professional, software developer, cybersecurity practitioner. From Kenya — where he figured out most of what he knows on his own, and shipped it anyway.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://izzy-jay.github.io">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Israel Gachara — IT · Dev · Cybersecurity">
+<meta name="twitter:description" content="IT professional, software developer, cybersecurity practitioner. From Kenya.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='14' fill='%23080808'/><text y='74' x='8' font-size='68' font-family='system-ui,sans-serif' font-weight='900' fill='%23c8f547'>IG</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -817,6 +826,9 @@ footer {
   .certs { grid-template-columns:repeat(2,1fr); }
   .nav-links a:not(.nav-cta) { display:none; }
   .nav-links { gap:0; }
+  .nav-badge { display:none; }
+  h1.hero-name { font-size: clamp(1.8rem, 9vw, 4rem); }
+  #ghb { bottom:1.2rem; }
 }
 @media (max-width:480px) {
   .certs { grid-template-columns:1fr; }
@@ -920,7 +932,11 @@ footer {
   content:''; position:absolute; top:100%; right:9px;
   border:6px solid transparent; border-top-color:var(--accent);
 }
-#ghb:hover .ghb-tip { opacity:1; transform:translateY(0); }
+#ghb:hover .ghb-tip,
+#ghb.open .ghb-tip { opacity:1; transform:translateY(0); pointer-events:auto; }
+.ghb-play { display:none; flex-direction:column; gap:6px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
+.ghb-play.show { display:flex; }
+.ghb-play-btn { background:var(--accent); color:#080808; border:none; padding:.45rem .8rem; font-family:'JetBrains Mono',monospace; font-size:.72rem; font-weight:700; letter-spacing:.06em; border-radius:4px; cursor:pointer; text-align:left; }
 
 /* ── CHALLENGE MODAL ── */
 #challenge-modal {
@@ -1158,6 +1174,10 @@ footer {
         <span class="ghb-label" id="ghb-label">psst…</span>
         <div class="ghb-row"><span class="ghb-game">🐍</span><span class="ghb-code" id="ghb-snake-code">a hidden game lives here</span></div>
         <div class="ghb-row"><span class="ghb-game">🏓</span><span class="ghb-code" id="ghb-pong-code">and another one too</span></div>
+        <div class="ghb-play" id="ghb-play">
+          <button class="ghb-play-btn" id="ghb-open-snake">🐍 PLAY SNAKE</button>
+          <button class="ghb-play-btn" id="ghb-open-pong">🏓 PLAY PONG</button>
+        </div>
       </div>
     </div>
   </section>
@@ -2067,6 +2087,7 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
     snakeResult.classList.remove('show');
     initGame();
   }
+  window._openSnake = openGame;
   function closeGame() {
     clearInterval(loop);
     clearInterval(hintTimer);
@@ -2304,6 +2325,7 @@ if (tlItems.length) {
     pongResult.classList.remove('show');
     initGame();
   }
+  window._openPong = openPong;
   function closePong() {
     clearInterval(loop);
     overlay.classList.remove('show');
@@ -2350,10 +2372,14 @@ if (tlItems.length) {
 
 /* ── GAME HINT BUBBLE (progressive) ── */
 (function() {
-  const ghb       = document.getElementById('ghb');
-  const labelEl   = document.getElementById('ghb-label');
-  const snakeEl   = document.getElementById('ghb-snake-code');
-  const pongEl    = document.getElementById('ghb-pong-code');
+  const ghb     = document.getElementById('ghb');
+  const tip     = ghb.querySelector('.ghb-tip');
+  const labelEl = document.getElementById('ghb-label');
+  const snakeEl = document.getElementById('ghb-snake-code');
+  const pongEl  = document.getElementById('ghb-pong-code');
+  const playEl  = document.getElementById('ghb-play');
+  const btnSnake = document.getElementById('ghb-open-snake');
+  const btnPong  = document.getElementById('ghb-open-pong');
 
   const levels = [
     {
@@ -2383,20 +2409,50 @@ if (tlItems.length) {
   ];
 
   let views = 0;
+  let tipOpen = false;
 
-  ghb.addEventListener('mouseenter', () => {
+  function applyLevel() {
     const lvl = levels[Math.min(views, levels.length - 1)];
     labelEl.textContent = lvl.label;
     snakeEl.textContent = lvl.snake;
     pongEl.textContent  = lvl.pong;
-    if (lvl.clear) {
-      snakeEl.classList.add('revealed');
-      pongEl.classList.add('revealed');
-    } else {
-      snakeEl.classList.remove('revealed');
-      pongEl.classList.remove('revealed');
-    }
+    snakeEl.classList.toggle('revealed', lvl.clear);
+    pongEl.classList.toggle('revealed', lvl.clear);
+    if (lvl.clear) playEl.classList.add('show');
     if (views < levels.length - 1) views++;
+  }
+
+  /* desktop: hover advances level */
+  ghb.addEventListener('mouseenter', () => { applyLevel(); });
+
+  /* mobile: tap to open/close tooltip and advance level */
+  ghb.addEventListener('click', e => {
+    if (window.matchMedia('(hover:hover)').matches) return;
+    e.stopPropagation();
+    if (!tipOpen) {
+      applyLevel();
+      ghb.classList.add('open');
+      tipOpen = true;
+    } else {
+      ghb.classList.remove('open');
+      tipOpen = false;
+    }
+  });
+
+  document.addEventListener('click', () => {
+    if (tipOpen) { ghb.classList.remove('open'); tipOpen = false; }
+  });
+
+  /* play button handlers (visible at level 4) */
+  btnSnake.addEventListener('click', e => {
+    e.stopPropagation();
+    ghb.classList.remove('open'); tipOpen = false;
+    window._challenge(window._openSnake);
+  });
+  btnPong.addEventListener('click', e => {
+    e.stopPropagation();
+    ghb.classList.remove('open'); tipOpen = false;
+    window._challenge(window._openPong);
   });
 })();
 
