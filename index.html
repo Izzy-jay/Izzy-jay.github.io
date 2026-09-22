@@ -454,7 +454,7 @@ h1.hero-name {
 .cert-name { font-size:.85rem; color:var(--muted); }
 
 /* CONTACT */
-#contact { text-align:center; }
+#contact { text-align:center; overflow:hidden; }
 .contact-inner { max-width:680px; margin:0 auto; padding-inline:clamp(20px,5vw,60px); }
 .contact-eyebrow {
   font-family:'JetBrains Mono',monospace;
@@ -464,9 +464,9 @@ h1.hero-name {
 }
 h2.contact-h {
   font-family:'Syne',sans-serif; font-weight:900;
-  font-size:clamp(2.6rem,6.5vw,5rem);
+  font-size:clamp(2rem, 5.5vw, 4.4rem);
   line-height:.95; text-transform:uppercase;
-  margin-bottom:1.5rem; text-wrap:balance;
+  margin-bottom:1.5rem; overflow-wrap:break-word;
 }
 .contact-sub {
   font-size:1rem; color:var(--muted);
